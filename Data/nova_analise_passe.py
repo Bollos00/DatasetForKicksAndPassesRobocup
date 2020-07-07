@@ -1,19 +1,18 @@
 from glob import glob
 import numpy
 from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsRegressor
-from sklearn.linear_model import MultiTaskLasso
-from sklearn.linear_model import LassoLars
-from sklearn.linear_model import BayesianRidge
-from sklearn.kernel_ridge import KernelRidge
+from sklearn.linear_model import LinearRegression
 from matplotlib import pyplot
+import pickle
 
-ndarray = numpy.array
+nparray = numpy.array
 pyplot.style.use('dark_background')
 
-file_names = glob("/home/robofei/Documents/ArquivosAnalise/TIGERS_MANHEIM/ATA/*Passe.csv")
+file_names = glob("/home/robofei/Documents/DataAnalyse-master/ALL/*Passe.csv")
 
-array_passe: ndarray = []
+# print(file_names)
+
+array_passe: nparray = []
 
 
 for f in file_names:
@@ -28,22 +27,26 @@ for f in file_names:
 
 array_passe = numpy.concatenate(array_passe)
 
-y: ndarray = array_passe[:, 0]
-X: ndarray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
+y: nparray = array_passe[:, 0]
+X: nparray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
 
-x_axis: ndarray = range(1, 100)
-score_train: ndarray = []
-score_test: ndarray = []
+lr_out: LinearRegression = LinearRegression().fit(X, y)
 
-for n in range(0,8):
-    z = numpy.polyfit(X[:, n], y, 2)
-    p = numpy.poly1d(z)
-    pyplot.plot(X[:, n], p(X[:, n]), 'go')
+pickle.dump(lr_out, open("avaliacao_passe_lr.sav", 'wb'))
 
-    pyplot.plot(X[:, n], y, 'ro')
 
-    pyplot.get_current_fig_manager().full_screen_toggle()
-    pyplot.show()
+# for n in range(0,8):
+#     z = numpy.polyfit(X[:, n], y, 2)
+#     p = numpy.poly1d(z)
+#     pyplot.plot(X[:, n], p(X[:, n]), 'go')
+
+#     pyplot.plot(X[:, n], y, 'ro')
+
+#     pyplot.show()
+
+x_axis: nparray = range(1, 100)
+score_train: nparray = []
+score_test: nparray = []
 
 
 for i in x_axis:
@@ -51,7 +54,7 @@ for i in x_axis:
     [X_train, X_test, y_train, y_test] = train_test_split(X,
                                                           y,
                                                           test_size=.2,
-                                                          random_state=1)
+                                                          random_state=i)
 
     # ridge: Ridge = Ridge(alpha=i*1e4).fit(X_train, y_train)
     # print("Training set score for {}-Ridge Regression model: {:.2f}".format(i,ridge.score(X_train, y_train)))
@@ -66,11 +69,11 @@ for i in x_axis:
     # print("Parameters: ", lasso.coef_)
     # print('\n')
 
-    knn: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=i).fit(X_train, y_train)
+    lr: LinearRegression = LinearRegression().fit(X_train, y_train)
     # kernel: KernelRidge = KernelRidge(alpha=i*1e3).fit(X_train, y_train)
 
-    score_test.append(knn.score(X_test, y_test))
-    score_train.append(knn.score(X_train, y_train))
+    score_test.append(lr.score(X_test, y_test))
+    score_train.append(lr.score(X_train, y_train))
 
     # z = numpy.polyfit(y, lasso.predict(X), 1)
     # p = numpy.poly1d(z)
@@ -82,7 +85,7 @@ for i in x_axis:
 
 pyplot.plot(x_axis, score_train, 'r-', label='Train score')
 pyplot.plot(x_axis, score_test, 'c-', label='Test score')
-pyplot.xlabel('nieghbors')
+pyplot.xlabel('random_state')
 pyplot.ylabel('score')
 pyplot.legend(loc="upper right")
 pyplot.grid()
