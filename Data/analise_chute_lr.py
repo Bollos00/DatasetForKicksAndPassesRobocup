@@ -8,7 +8,7 @@ import pickle
 nparray = numpy.array
 pyplot.style.use('dark_background')
 
-file_names = glob("/home/robofei/Documents/DataAnalyse/ALL/*Chute.csv")
+file_names = glob("/home/robofei/Documents/DataAnalyse/ER_FORCE/ATA/*Chute.csv")
 
 array_chute: nparray = []
 
@@ -19,7 +19,9 @@ for f in file_names:
             f,
             dtype=int,
             delimiter=";",
-            skip_header=1))
+            skip_header=1
+        )
+    )
 
 array_chute = numpy.concatenate(array_chute)
 

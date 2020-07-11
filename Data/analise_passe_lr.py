@@ -8,7 +8,7 @@ import pickle
 nparray = numpy.array
 pyplot.style.use('dark_background')
 
-file_names = glob("/home/robofei/Documents/DataAnalyse-master/ALL/*Passe.csv")
+file_names = glob("/home/robofei/Documents/DataAnalyse/ALL/*Passe.csv")
 
 # print(file_names)
 
@@ -74,6 +74,8 @@ for i in x_axis:
 
     score_test.append(lr.score(X_test, y_test))
     score_train.append(lr.score(X_train, y_train))
+
+    # print(lr.coef_)
 
     # z = numpy.polyfit(y, lasso.predict(X), 1)
     # p = numpy.poly1d(z)
