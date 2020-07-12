@@ -5,6 +5,7 @@ from sklearn.neighbors import KNeighborsRegressor
 from sklearn.neighbors import RadiusNeighborsRegressor
 from matplotlib import pyplot
 import pickle
+import joblib
 
 nparray = numpy.array
 pyplot.style.use('dark_background')
@@ -54,6 +55,10 @@ array_passe = numpy.concatenate(array_passe)
 y: nparray = array_passe[:, 0]
 X: nparray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
 
+knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=30,weights='uniform',n_jobs=1).fit(X, y)
+
+# pickle.dump(knn_out, open("avaliacao_passe_knn.sav", 'wb'))
+joblib.dump(knn_out, "avaliacao_passe_knn.sav")
 
 x_axis: nparray = range(1, 50)
 score_train: nparray = []
@@ -66,8 +71,8 @@ for i in x_axis:
                                                           test_size=.2,
                                                           random_state=i)
 
-    knn: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=100,weights=customized_weights).fit(X_train, y_train)
-    # knn: RadiusNeighborsRegressor = RadiusNeighborsRegressor(radius=50, weights=customized_weights).fit(X_train, y_train)
+    knn: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=30,weights=customized_weights).fit(X_train, y_train)
+    # knn: RadiusNeighborsRegressor = RadiusNeighborsRegressor(radius=500, weights=customized_weights).fit(X_train, y_train)
 
     score_test.append(knn.score(X_test, y_test))
     score_train.append(knn.score(X_train, y_train))
