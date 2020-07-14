@@ -32,7 +32,7 @@ X: nparray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
 
 lr_out: LinearRegression = LinearRegression().fit(X, y)
 
-pickle.dump(lr_out, open("avaliacao_passe_lr.sav", 'wb'))
+pickle.dump(lr_out, open("models/avaliacao_passe_lr.sav", 'wb'))
 
 
 # for n in range(0,8):

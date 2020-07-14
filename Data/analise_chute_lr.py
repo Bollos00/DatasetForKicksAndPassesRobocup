@@ -4,6 +4,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from matplotlib import pyplot
 import pickle
+from sklearn.model_selection import cross_val_score
 
 nparray = numpy.array
 pyplot.style.use('dark_background')
@@ -30,7 +31,9 @@ X: nparray = array_chute[:, [1, 2, 3]]
 
 lr_out: LinearRegression = LinearRegression().fit(X, y)
 
-pickle.dump(lr_out, open("avaliacao_chute_lr.sav", 'wb'))
+print(cross_val_score(lr_out, X, y, cv=10).mean())
+
+pickle.dump(lr_out, open("models/avaliacao_chute_lr.sav", 'wb'))
 
 
 x_axis: nparray = range(1, 50)
