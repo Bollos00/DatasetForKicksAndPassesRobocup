@@ -6,6 +6,7 @@ from sklearn.ensemble import AdaBoostRegressor
 from matplotlib import pyplot
 import pickle
 import joblib
+import time
 
 nparray = numpy.array
 pyplot.style.use('dark_background')
@@ -31,26 +32,44 @@ array_chute = numpy.concatenate(array_chute)
 y: nparray = array_chute[:, 0]
 X: nparray = array_chute[:, [1, 2, 3]]
 
-x_axis: nparray = range(1, 200)
+x_axis: nparray = range(1, 4000, 10)
 score_train: nparray = []
 score_test: nparray = []
+
+start: float = time.time()
 
 for i in x_axis:
 
     [X_train, X_test, y_train, y_test] = train_test_split(
-        X, y, test_size=.2, random_state=25
+        X, y, test_size=.2, random_state=i
         )
 
     ada_boost: AdaBoostRegressor = AdaBoostRegressor(
         base_estimator=None,
-        n_estimators=1,
-        learning_rate=1,
+        n_estimators=5,
+        learning_rate=85e-3,
         loss='linear',
         random_state=i
     ).fit(X_train, y_train)
 
+    # ada_boost: AdaBoostRegressor = AdaBoostRegressor(
+    #     base_estimator=None,
+    #     n_estimators=10,
+    #     learning_rate=2e-3,
+    #     loss='linear',
+    #     random_state=i
+    # ).fit(X_train, y_train)
+
     score_test.append(ada_boost.score(X_test, y_test))
     score_train.append(ada_boost.score(X_train, y_train))
+
+end: float = time.time()
+
+print("Score test: ", numpy.mean(score_test))
+print("Score train: ", numpy.mean(score_train))
+print("Time of operation: {} ms".format(
+    (end-start)*1e3/(numpy.size(x_axis)*numpy.size(y)))
+      )
 
 pyplot.plot(x_axis, score_test, 'c-', label='Test score')
 pyplot.plot(x_axis, score_train, 'r-', label='Train score')

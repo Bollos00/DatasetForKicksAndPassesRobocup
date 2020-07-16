@@ -74,8 +74,16 @@ for i in x_axis:
                                                           test_size=.2,
                                                           random_state=i)
 
-    knn: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=20,
-                                                   weights=customized_weights).fit(X_train, y_train)
+    knn: KNeighborsRegressor = KNeighborsRegressor(
+        n_neighbors=5,
+        weights='uniform',
+        algorithm='auto',
+        leaf_size=30,
+        p=2,
+        metric='minkowski',
+        metric_params=None,
+        n_jobs=None
+        ).fit(X_train, y_train)
     # knn: RadiusNeighborsRegressor = RadiusNeighborsRegressor(radius=500, weights=customized_weights).fit(X_train, y_train)
 
     score_test.append(knn.score(X_test, y_test))

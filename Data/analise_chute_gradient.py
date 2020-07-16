@@ -40,30 +40,30 @@ start: float = time.time()
 for i in x_axis:
 
     [X_train, X_test, y_train, y_test] = train_test_split(
-        X, y, test_size=.2, random_state=i
+        X, y, test_size=.2, random_state=i*5
         )
 
     gradient: GradientBoostingRegressor = GradientBoostingRegressor(
         loss='ls',
-        learning_rate=.06,
+        learning_rate=50e-3,
         n_estimators=40,
         subsample=1.0,
         criterion='friedman_mse',
-        min_samples_split=.1,
-        min_samples_leaf=.04,
-        min_weight_fraction_leaf=0,
-        max_depth=8,
-        min_impurity_decrease=0.0,
-        min_impurity_split=None,
+        min_samples_split=0.01,
+        min_samples_leaf=2e-3,
+        min_weight_fraction_leaf=2e-3,
+        max_depth=4,
+        min_impurity_decrease=20e3,
+        min_impurity_split=3e3,
         init=None,
-        random_state=8*i,
+        random_state=i*3,
         max_features='auto',
-        alpha=0.9,
+        alpha=.9,
         verbose=0,
-        max_leaf_nodes=None,
+        max_leaf_nodes=12,
         warm_start=False,
         presort='deprecated',
-        validation_fraction=0.1,
+        validation_fraction=.1,
         n_iter_no_change=None,
         tol=1e-4,
         ccp_alpha=0.0
@@ -74,6 +74,7 @@ for i in x_axis:
 
 end: float = time.time()
 
+print('\n')
 print("Score test: ", numpy.mean(score_test))
 print("Score train: ", numpy.mean(score_train))
 print("Time of operation: {} ms".format(

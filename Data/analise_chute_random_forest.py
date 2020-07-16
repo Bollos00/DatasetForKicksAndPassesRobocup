@@ -32,7 +32,7 @@ array_chute = numpy.concatenate(array_chute)
 y: nparray = array_chute[:, 0]
 X: nparray = array_chute[:, [1, 2, 3]]
 
-x_axis: nparray = range(1, 200, 1)
+x_axis: nparray = range(1, 500, 1)
 score_train: nparray = []
 score_test: nparray = []
 
@@ -44,22 +44,22 @@ for i in x_axis:
         )
 
     forest: RandomForestRegressor = RandomForestRegressor(
-        n_estimators=8,
-        max_depth=5,
-        min_samples_split=15,
-        min_samples_leaf=6,
-        min_weight_fraction_leaf=0,
+        n_estimators=10,
+        max_depth=6,
+        min_samples_split=.05,
+        min_samples_leaf=.02,
+        min_weight_fraction_leaf=.03,
         max_features='auto',
-        max_leaf_nodes=None,
-        min_impurity_decrease=0,
+        max_leaf_nodes=20,
+        min_impurity_decrease=40,
         min_impurity_split=None,
         bootstrap=True,
         oob_score=False,
         n_jobs=None,
-        random_state=i*5,
+        random_state=i**2,
         verbose=0,
         warm_start=False,
-        ccp_alpha=0.0,
+        ccp_alpha=0,
         max_samples=None
     ).fit(X_train, y_train)
 
@@ -70,7 +70,9 @@ end: float = time.time()
 
 print("Score test: ", numpy.mean(score_test))
 print("Score train: ", numpy.mean(score_train))
-print("Time of operation: {} ms".format((end-start)*1e3/numpy.size(x_axis)))
+print("Time of operation: {} ms".format(
+    (end-start)*1e3/(numpy.size(x_axis)*numpy.size(y)))
+      )
 
 pyplot.plot(x_axis, score_test, 'c-', label='Test score')
 pyplot.plot(x_axis, score_train, 'r-', label='Train score')

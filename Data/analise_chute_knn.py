@@ -6,7 +6,7 @@ from sklearn.neighbors import RadiusNeighborsRegressor
 from matplotlib import pyplot
 import pickle
 import joblib
-
+import time
 nparray = numpy.array
 pyplot.style.use('dark_background')
 
@@ -38,20 +38,37 @@ knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=10,
 # pickle.dump(knn_out, open("avaliacao_chute_knn.sav", 'wb'))
 joblib.dump(knn_out, "models/avaliacao_chute_knn.sav")
 
-x_axis: nparray = range(1, 50)
+x_axis: nparray = range(1, 200, 1)
 score_train: nparray = []
 score_test: nparray = []
 
+start: float = time.time()
 for i in x_axis:
 
     [X_train, X_test, y_train, y_test] = train_test_split(X, y, test_size=.2, random_state=i)
 
-    knn: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=10,
-                                                   weights='uniform').fit(X_train, y_train)
+    knn: KNeighborsRegressor = KNeighborsRegressor(
+        n_neighbors=12,
+        weights='uniform',
+        algorithm='auto',
+        leaf_size=30,
+        p=3,
+        metric='minkowski',
+        metric_params=None,
+        n_jobs=1
+        ).fit(X_train, y_train)
     # knn: RadiusNeighborsRegressor = RadiusNeighborsRegressor(radius=5, weights='uniform').fit(X_train, y_train)
 
     score_test.append(knn.score(X_test, y_test))
     score_train.append(knn.score(X_train, y_train))
+
+end: float = time.time()
+
+print("Score test: ", numpy.mean(score_test))
+print("Score train: ", numpy.mean(score_train))
+print("Time of operation: {} ms".format(
+    (end-start)*1e3/(numpy.size(x_axis)*numpy.size(y)))
+      )
 
 pyplot.plot(x_axis, score_test, 'c-', label='Test score')
 pyplot.plot(x_axis, score_train, 'r-', label='Train score')
