@@ -3,7 +3,7 @@ import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LinearRegression
 from matplotlib import pyplot
-import pickle
+import joblib
 
 nparray = numpy.array
 pyplot.style.use('dark_background')
@@ -32,7 +32,7 @@ X: nparray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
 
 lr_out: LinearRegression = LinearRegression().fit(X, y)
 
-pickle.dump(lr_out, open("models/avaliacao_passe_lr.sav", 'wb'))
+joblib.dump(lr_out, "models/avaliacao_passe_lr.sav")
 
 
 # for n in range(0,8):
@@ -87,7 +87,7 @@ for i in x_axis:
 
 pyplot.plot(x_axis, score_train, 'r-', label='Train score')
 pyplot.plot(x_axis, score_test, 'c-', label='Test score')
-pyplot.xlabel('random_state')
+pyplot.xlabel('???')
 pyplot.ylabel('score')
 pyplot.legend(loc="upper right")
 pyplot.grid()

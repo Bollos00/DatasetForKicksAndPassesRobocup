@@ -2,9 +2,7 @@ from glob import glob
 import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsRegressor
-from sklearn.neighbors import RadiusNeighborsRegressor
 from matplotlib import pyplot
-import pickle
 import joblib
 
 nparray = numpy.array
@@ -37,7 +35,6 @@ knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=30,
                                                    weights='uniform',
                                                    n_jobs=1).fit(X, y)
 
-# pickle.dump(knn_out, open("avaliacao_passe_knn.sav", 'wb'))
 joblib.dump(knn_out, "models/avaliacao_passe_knn.sav")
 
 x_axis: nparray = range(1, 50)
@@ -61,7 +58,7 @@ for i in x_axis:
 
 pyplot.plot(x_axis, score_train, 'r-', label='Train score')
 pyplot.plot(x_axis, score_test, 'c-', label='Test score')
-pyplot.xlabel('random_state')
+pyplot.xlabel('???')
 pyplot.ylabel('score')
 pyplot.legend(loc="upper right")
 pyplot.grid()

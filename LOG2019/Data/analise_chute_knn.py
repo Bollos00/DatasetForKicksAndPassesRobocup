@@ -1,13 +1,10 @@
-
 from glob import glob
 import numpy
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import AdaBoostRegressor
+from sklearn.neighbors import KNeighborsRegressor
 from matplotlib import pyplot
-import pickle
 import joblib
 import time
-
 nparray = numpy.array
 pyplot.style.use('dark_background')
 
@@ -32,36 +29,35 @@ array_chute = numpy.concatenate(array_chute)
 y: nparray = array_chute[:, 0]
 X: nparray = array_chute[:, [1, 2, 3]]
 
-x_axis: nparray = range(1, 4000, 10)
+knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=12,
+                                                   weights='uniform',
+                                                   n_jobs=1).fit(X, y)
+
+joblib.dump(knn_out, "models/avaliacao_chute_knn.sav")
+
+x_axis: nparray = range(1, 200, 1)
 score_train: nparray = []
 score_test: nparray = []
 
 start: float = time.time()
-
 for i in x_axis:
 
-    [X_train, X_test, y_train, y_test] = train_test_split(
-        X, y, test_size=.2, random_state=i
-        )
+    [X_train, X_test, y_train, y_test] = train_test_split(X, y, test_size=.2, random_state=i)
 
-    ada_boost: AdaBoostRegressor = AdaBoostRegressor(
-        base_estimator=None,
-        n_estimators=5,
-        learning_rate=85e-3,
-        loss='linear',
-        random_state=i
-    ).fit(X_train, y_train)
+    knn: KNeighborsRegressor = KNeighborsRegressor(
+        n_neighbors=12,
+        weights='uniform',
+        algorithm='auto',
+        leaf_size=30,
+        p=3,
+        metric='minkowski',
+        metric_params=None,
+        n_jobs=1
+        ).fit(X_train, y_train)
+    # knn: RadiusNeighborsRegressor = RadiusNeighborsRegressor(radius=5, weights='uniform').fit(X_train, y_train)
 
-    # ada_boost: AdaBoostRegressor = AdaBoostRegressor(
-    #     base_estimator=None,
-    #     n_estimators=10,
-    #     learning_rate=2e-3,
-    #     loss='linear',
-    #     random_state=i
-    # ).fit(X_train, y_train)
-
-    score_test.append(ada_boost.score(X_test, y_test))
-    score_train.append(ada_boost.score(X_train, y_train))
+    score_test.append(knn.score(X_test, y_test))
+    score_train.append(knn.score(X_train, y_train))
 
 end: float = time.time()
 

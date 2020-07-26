@@ -4,7 +4,6 @@ import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
 from matplotlib import pyplot
-import pickle
 import joblib
 import time
 
@@ -31,6 +30,34 @@ array_chute = numpy.concatenate(array_chute)
 
 y: nparray = array_chute[:, 0]
 X: nparray = array_chute[:, [1, 2, 3]]
+
+gradient_out: GradientBoostingRegressor = GradientBoostingRegressor(
+    loss='ls',
+    learning_rate=50e-3,
+    n_estimators=40,
+    subsample=1.0,
+    criterion='friedman_mse',
+    min_samples_split=0.01,
+    min_samples_leaf=2e-3,
+    min_weight_fraction_leaf=2e-3,
+    max_depth=4,
+    min_impurity_decrease=20e3,
+    min_impurity_split=3e3,
+    init=None,
+    random_state=127*3,
+    max_features='auto',
+    alpha=.9,
+    verbose=0,
+    max_leaf_nodes=12,
+    warm_start=False,
+    presort='deprecated',
+    validation_fraction=.1,
+    n_iter_no_change=None,
+    tol=1e-4,
+    ccp_alpha=0.0
+    ).fit(X, y)
+
+joblib.dump(gradient_out, "models/avaliacao_chute_gradient.sav")
 
 x_axis: nparray = range(0, 200, 1)
 score_train: nparray = []
@@ -83,7 +110,7 @@ print("Time of operation: {} ms".format(
 
 pyplot.plot(x_axis, score_test, 'c-', label='Test score')
 pyplot.plot(x_axis, score_train, 'r-', label='Train score')
-pyplot.xlabel('random_state')
+pyplot.xlabel('???')
 pyplot.ylabel('score')
 pyplot.legend(loc="upper right")
 pyplot.grid()
