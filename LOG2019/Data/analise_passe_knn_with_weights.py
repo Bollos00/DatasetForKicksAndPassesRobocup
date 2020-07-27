@@ -32,7 +32,7 @@ def customized_weights(distances: nparray) -> nparray:
     return weights
 
 
-file_names = glob("/home/robofei/Documents/DataAnalyse/ALL/*Passe.csv")
+file_names = glob("../ALL/*Passe.csv")
 
 # print(file_names)
 

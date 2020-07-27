@@ -11,7 +11,7 @@ nparray = numpy.array
 pyplot.style.use('dark_background')
 
 
-file_names = glob("/home/robofei/Documents/DataAnalyse/ALL/*Chute.csv")
+file_names = glob("../ALL/*Chute.csv")
 
 array_chute: nparray = []
 

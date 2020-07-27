@@ -31,7 +31,7 @@ def customized_weights(distances: nparray) -> nparray:
     return weights
 
 
-file_names = glob("/home/robofei/Documents/DataAnalyse/ALL/*Chute.csv")
+file_names = glob("../ALL/*Chute.csv")
 
 array_chute: nparray = []
 

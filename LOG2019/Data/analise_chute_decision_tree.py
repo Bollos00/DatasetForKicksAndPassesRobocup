@@ -1,7 +1,7 @@
 from glob import glob
 import numpy
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestRegressor
+from sklearn.tree import DecisionTreeRegressor
 from matplotlib import pyplot
 import joblib
 import time
@@ -30,27 +30,23 @@ array_chute = numpy.concatenate(array_chute)
 y: nparray = array_chute[:, 0]
 X: nparray = array_chute[:, [1, 2, 3]]
 
-forest_out: RandomForestRegressor = RandomForestRegressor(
-    n_estimators=10,
-    max_depth=6,
-    min_samples_split=.05,
-    min_samples_leaf=.02,
-    min_weight_fraction_leaf=.03,
+tree_out: DecisionTreeRegressor = DecisionTreeRegressor(
+    criterion='mse',
+    splitter='best',
+    max_depth=2,
+    min_samples_split=100*1e-3,
+    min_samples_leaf=150*1e-3,
+    min_weight_fraction_leaf=100*1e-3,
     max_features='auto',
-    max_leaf_nodes=20,
-    min_impurity_decrease=40,
+    random_state=30,
+    max_leaf_nodes=4,
+    min_impurity_decrease=0,
     min_impurity_split=None,
-    bootstrap=True,
-    oob_score=False,
-    n_jobs=None,
-    random_state=28**2,
-    verbose=0,
-    warm_start=False,
-    ccp_alpha=0,
-    max_samples=None
-    ).fit(X, y)
+    presort='deprecated',
+    ccp_alpha=0
+).fit(X, y)
 
-joblib.dump(forest_out, "models/avaliacao_chute_forest.sav")
+joblib.dump(tree_out, "models/avaliacao_chute_tree.sav")
 
 x_axis: nparray = range(1, 50, 1)
 score_train: nparray = []
@@ -63,28 +59,24 @@ for i in x_axis:
         X, y, test_size=.2, random_state=i
         )
 
-    forest: RandomForestRegressor = RandomForestRegressor(
-        n_estimators=10,
-        max_depth=6,
-        min_samples_split=.05,
-        min_samples_leaf=.02,
-        min_weight_fraction_leaf=.03,
+    tree: DecisionTreeRegressor = DecisionTreeRegressor(
+        criterion='mse',
+        splitter='best',
+        max_depth=2,
+        min_samples_split=100*1e-3,
+        min_samples_leaf=150*1e-3,
+        min_weight_fraction_leaf=100*1e-3,
         max_features='auto',
-        max_leaf_nodes=20,
-        min_impurity_decrease=40,
+        random_state=2*i,
+        max_leaf_nodes=4,
+        min_impurity_decrease=0,
         min_impurity_split=None,
-        bootstrap=True,
-        oob_score=False,
-        n_jobs=None,
-        random_state=i**2,
-        verbose=0,
-        warm_start=False,
-        ccp_alpha=0,
-        max_samples=None
+        presort='deprecated',
+        ccp_alpha=0
     ).fit(X_train, y_train)
 
-    score_test.append(forest.score(X_test, y_test))
-    score_train.append(forest.score(X_train, y_train))
+    score_test.append(tree.score(X_test, y_test))
+    score_train.append(tree.score(X_train, y_train))
 
 end: float = time.time()
 
