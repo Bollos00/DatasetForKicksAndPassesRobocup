@@ -1,15 +1,17 @@
-from glob import glob
+
 import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsRegressor
 from matplotlib import pyplot
 import joblib
 import time
-nparray = numpy.array
+import analise_auxiliar
+from typing import List
+
 pyplot.style.use('dark_background')
 
-def customized_weights(distances: nparray) -> nparray:
-    weights: nparray = nparray(numpy.full(distances.shape, 0), dtype='float')
+def customized_weights(distances: numpy.ndarray) -> numpy.ndarray:
+    weights: numpy.ndarray = numpy.array(numpy.full(distances.shape, 0), dtype='float')
     # create a new array weights with the same dimension distances and fill
     # the array with 0 element.
     for i in range(distances.shape[0]):  # for each prediction:
@@ -31,25 +33,10 @@ def customized_weights(distances: nparray) -> nparray:
     return weights
 
 
-file_names = glob("../ALL/*Chute.csv")
+array_chute: numpy.ndarray = analise_auxiliar.getArrayFromPattern("ALL/*Chute.csv")
 
-array_chute: nparray = []
-
-
-for f in file_names:
-    array_chute.append(
-        numpy.genfromtxt(
-            f,
-            dtype=numpy.uint8,
-            delimiter=";",
-            skip_header=1
-        )
-    )
-
-array_chute = numpy.concatenate(array_chute)
-
-y: nparray = array_chute[:, 0]
-X: nparray = array_chute[:, [1, 2, 3]]
+y: numpy.ndarray = array_chute[:, 0]
+X: numpy.ndarray = array_chute[:, [1, 2, 3]]
 
 knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=15,
                                                    weights=customized_weights,
@@ -57,12 +44,11 @@ knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=15,
 
 joblib.dump(knn_out, "models/avaliacao_chute_knn_with_weights.sav")
 
-x_axis: nparray = range(1, 200, 1)
-score_train: nparray = []
-score_test: nparray = []
+x_axis: List[int] = list(range(1, 100, 1))
+score_train: List[float] = []
+score_test: List[float] = []
 
 start: float = time.time()
-
 for i in x_axis:
 
     [X_train, X_test, y_train, y_test] = train_test_split(X,

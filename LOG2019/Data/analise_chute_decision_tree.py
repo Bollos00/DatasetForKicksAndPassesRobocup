@@ -1,34 +1,19 @@
-from glob import glob
+
 import numpy
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import DecisionTreeRegressor
 from matplotlib import pyplot
 import joblib
 import time
+import analise_auxiliar
+from typing import List
 
-nparray = numpy.array
 pyplot.style.use('dark_background')
 
+array_chute: numpy.ndarray = analise_auxiliar.getArrayFromPattern("ALL/*Chute.csv")
 
-file_names = glob("../ALL/*Chute.csv")
-
-array_chute: nparray = []
-
-
-for f in file_names:
-    array_chute.append(
-        numpy.genfromtxt(
-            f,
-            dtype=numpy.uint8,
-            delimiter=";",
-            skip_header=1
-        )
-    )
-
-array_chute = numpy.concatenate(array_chute)
-
-y: nparray = array_chute[:, 0]
-X: nparray = array_chute[:, [1, 2, 3]]
+y: numpy.ndarray = array_chute[:, 0]
+X: numpy.ndarray = array_chute[:, [1, 2, 3]]
 
 tree_out: DecisionTreeRegressor = DecisionTreeRegressor(
     criterion='mse',
@@ -48,9 +33,9 @@ tree_out: DecisionTreeRegressor = DecisionTreeRegressor(
 
 joblib.dump(tree_out, "models/avaliacao_chute_tree.sav")
 
-x_axis: nparray = range(1, 50, 1)
-score_train: nparray = []
-score_test: nparray = []
+x_axis: List[int] = list(range(1, 100, 1))
+score_train: List[float] = []
+score_test: List[float] = []
 
 start: float = time.time()
 for i in x_axis:
