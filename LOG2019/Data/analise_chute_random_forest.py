@@ -10,7 +10,7 @@ from typing import List, NewType
 
 pyplot.style.use('dark_background')
 
-array_chute: numpy.ndarray = analise_auxiliar.getArrayFromPattern("ALL/*Chute.csv")
+array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ALL/*Chute.csv")
 
 y: numpy.ndarray = array_chute[:, 0]
 X: numpy.ndarray = array_chute[:, [1, 2, 3]]
@@ -73,17 +73,7 @@ for i in x_axis:
 
 end: float = time.time()
 
-print("Score test: ", numpy.mean(score_test))
-print("Score train: ", numpy.mean(score_train))
-print("Time of operation: {} ms".format(
-    (end-start)*1e3/(numpy.size(x_axis)*numpy.size(y)))
-      )
+analise_auxiliar.print_time_of_each_prediction(start, end, numpy.size(x_axis), numpy.size(y))
+analise_auxiliar.print_score(numpy.mean(score_test), numpy.mean(score_train))
 
-pyplot.plot(x_axis, score_test, 'c-', label='Test score')
-pyplot.plot(x_axis, score_train, 'r-', label='Train score')
-pyplot.xlabel('???')
-pyplot.ylabel('score')
-pyplot.legend(loc="upper right")
-pyplot.grid()
-
-pyplot.show()
+analise_auxiliar.plot_results(x_axis, score_test, score_train)

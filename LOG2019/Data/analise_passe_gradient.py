@@ -1,37 +1,16 @@
-from glob import glob
+
 import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import GradientBoostingRegressor
-from matplotlib import pyplot
-import pickle
 import joblib
 import time
+import analise_auxiliar
+from typing import List
 
-nparray = numpy.array
-pyplot.style.use('dark_background')
+array_passe: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ALL/*Passe.csv")
 
-
-file_names = glob("../ALL/*Passe.csv")
-
-# print(file_names)
-
-array_passe: nparray = []
-
-
-for f in file_names:
-    array_passe.append(
-        numpy.genfromtxt(
-            f,
-            dtype=int,
-            delimiter=";",
-            skip_header=1
-        )
-    )
-
-array_passe = numpy.concatenate(array_passe)
-
-y: nparray = array_passe[:, 0]
-X: nparray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
+y: numpy.ndarray = array_passe[:, 0]
+X: numpy.ndarray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
 
 gradient_out: GradientBoostingRegressor = GradientBoostingRegressor(
     loss='ls',
@@ -61,9 +40,9 @@ gradient_out: GradientBoostingRegressor = GradientBoostingRegressor(
 
 joblib.dump(gradient_out, "models/avaliacao_passe_gradient.sav")
 
-x_axis: nparray = range(1, 50, 1)
-score_train: nparray = []
-score_test: nparray = []
+x_axis: List[int] = list(range(1, 200))
+score_train: List[float] = []
+score_test: List[float] = []
 
 start: float = time.time()
 for i in x_axis:
@@ -103,17 +82,7 @@ for i in x_axis:
 
 end: float = time.time()
 
-print("Score test: ", numpy.mean(score_test))
-print("Score train: ", numpy.mean(score_train))
-print("Time of operation: {} ms".format(
-    (end-start)*1e3/(numpy.size(x_axis)*numpy.size(y)))
-      )
+analise_auxiliar.print_time_of_each_prediction(start, end, numpy.size(x_axis), numpy.size(y))
+analise_auxiliar.print_score(numpy.mean(score_test), numpy.mean(score_train))
 
-pyplot.plot(x_axis, score_test, 'c-', label='Test score')
-pyplot.plot(x_axis, score_train, 'r-', label='Train score')
-pyplot.xlabel('???')
-pyplot.ylabel('score')
-pyplot.legend(loc="upper right")
-pyplot.grid()
-
-pyplot.show()
+analise_auxiliar.plot_results(x_axis, score_test, score_train)

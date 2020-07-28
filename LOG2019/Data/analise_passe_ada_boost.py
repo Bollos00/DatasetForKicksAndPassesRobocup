@@ -1,35 +1,16 @@
-from glob import glob
+
 import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import AdaBoostRegressor
-from matplotlib import pyplot
 import joblib
+import time
+import analise_auxiliar
+from typing import List
 
-nparray = numpy.array
-pyplot.style.use('dark_background')
+array_passe: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ALL/*Passe.csv")
 
-
-file_names = glob("../ALL/*Passe.csv")
-
-# print(file_names)
-
-array_passe: nparray = []
-
-
-for f in file_names:
-    array_passe.append(
-        numpy.genfromtxt(
-            f,
-            dtype=int,
-            delimiter=";",
-            skip_header=1
-        )
-    )
-
-array_passe = numpy.concatenate(array_passe)
-
-y: nparray = array_passe[:, 0]
-X: nparray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
+y: numpy.ndarray = array_passe[:, 0]
+X: numpy.ndarray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
 
 ada_boost_out: AdaBoostRegressor = AdaBoostRegressor(
     base_estimator=None,
@@ -41,14 +22,16 @@ ada_boost_out: AdaBoostRegressor = AdaBoostRegressor(
 
 joblib.dump(ada_boost_out, "models/avaliacao_passe_ada_boost.sav")
 
-x_axis: nparray = range(1, 50)
-score_train: nparray = []
-score_test: nparray = []
+x_axis: List[int] = list(range(1, 200))
+score_train: List[float] = []
+score_test: List[float] = []
+
+start: float = time.time()
 
 for i in x_axis:
 
     [X_train, X_test, y_train, y_test] = train_test_split(
-        X, y, test_size=.2, random_state=38
+        X, y, test_size=.2, random_state=i
         )
 
     ada_boost: AdaBoostRegressor = AdaBoostRegressor(
@@ -62,12 +45,9 @@ for i in x_axis:
     score_test.append(ada_boost.score(X_test, y_test))
     score_train.append(ada_boost.score(X_train, y_train))
 
+end: float = time.time()
 
-pyplot.plot(x_axis, score_train, 'r-', label='Train score')
-pyplot.plot(x_axis, score_test, 'c-', label='Test score')
-pyplot.xlabel('???')
-pyplot.ylabel('score')
-pyplot.legend(loc="upper right")
-pyplot.grid()
+analise_auxiliar.print_time_of_each_prediction(start, end, numpy.size(x_axis), numpy.size(y))
+analise_auxiliar.print_score(numpy.mean(score_test), numpy.mean(score_train))
 
-pyplot.show()
+analise_auxiliar.plot_results(x_axis, score_test, score_train)
