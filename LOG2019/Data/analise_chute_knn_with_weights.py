@@ -2,35 +2,30 @@
 import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsRegressor
-from matplotlib import pyplot
+from sklearn.neighbors import RadiusNeighborsRegressor
 import joblib
 import time
 import analise_auxiliar
 from typing import List
 
-pyplot.style.use('dark_background')
 
-def customized_weights(distances: numpy.ndarray) -> numpy.ndarray:
-    weights: numpy.ndarray = numpy.array(numpy.full(distances.shape, 0), dtype='float')
+def customized_weights_linear(distances_weights: numpy.ndarray) -> numpy.ndarray:
+
+    MAXIMUM_DISTANCE: numpy.float64 = numpy.float64(50)
     # create a new array weights with the same dimension distances and fill
     # the array with 0 element.
-    for i in range(distances.shape[0]):  # for each prediction:
-        if distances[i, 0] >= 200:  # if the smaller distance is greather than 100,
-            # consider the nearest neighbor's weight as 1
-            # and the neighbor weights will stay zero
-            weights[i, 0] = 1
-            # than continue to the next prediction
+    for i, var in enumerate(distances_weights):  # for each prediction:
+        if numpy.size(var) == 0:
             continue
 
-        for j in range(distances.shape[1]):  # aply the weight function for each distance
-            # print(distances[i, j])
+        for j, _var in enumerate(distances_weights[i]):  # apply the weight function for each distance
 
-            if (distances[i, j] >= 200):
-                break
+            if (_var >= MAXIMUM_DISTANCE):
+                distances_weights[i][j] = 0.0001
+                continue
+            distances_weights[i][j] = 1 - _var/MAXIMUM_DISTANCE
 
-            weights[i, j] = 1 - distances[i, j]/200
-
-    return weights
+    return distances_weights
 
 
 array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ALL/*Chute.csv")
@@ -39,7 +34,7 @@ y: numpy.ndarray = array_chute[:, 0]
 X: numpy.ndarray = array_chute[:, [1, 2, 3]]
 
 knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=15,
-                                                   weights=customized_weights,
+                                                   weights=customized_weights_linear,
                                                    n_jobs=1).fit(X, y)
 
 joblib.dump(knn_out, "models/avaliacao_chute_knn_with_weights.sav")
@@ -57,8 +52,8 @@ for i in x_axis:
                                                           random_state=i)
 
     knn: KNeighborsRegressor = KNeighborsRegressor(
-        n_neighbors=12,
-        weights=customized_weights,
+        n_neighbors=10,
+        weights=customized_weights_linear,
         algorithm='auto',
         leaf_size=30,
         p=4,
@@ -66,7 +61,17 @@ for i in x_axis:
         metric_params=None,
         n_jobs=1
         ).fit(X_train, y_train)
-    # knn: RadiusNeighborsRegressor = RadiusNeighborsRegressor(radius=5, weights=customized_weights).fit(X_train, y_train)
+
+    # knn: RadiusNeighborsRegressor = RadiusNeighborsRegressor(
+    #     radius=50,
+    #     weights=customized_weights_linear,
+    #     algorithm='auto',
+    #     leaf_size=30,
+    #     p=2,
+    #     metric='minkowski',
+    #     metric_params=None,
+    #     n_jobs=1
+    #     ).fit(X_train, y_train)
 
     score_test.append(knn.score(X_test, y_test))
     score_train.append(knn.score(X_train, y_train))
