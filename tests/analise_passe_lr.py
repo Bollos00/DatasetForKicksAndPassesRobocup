@@ -1,21 +1,17 @@
-
 import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import ElasticNet
-from matplotlib import pyplot
 import joblib
 import time
 import analise_auxiliar
 
-pyplot.style.use('dark_background')
+array_passe: numpy.ndarray = analise_auxiliar.get_array_from_pattern("LOG2019/ALL/*Passe.csv")
 
-array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ALL/*Chute.csv")
-
-y: numpy.ndarray = array_chute[:, 0]
-X: numpy.ndarray = array_chute[:, [1, 2, 3]]
+y: numpy.ndarray = array_passe[:, 0]
+X: numpy.ndarray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
 
 model_out: ElasticNet = ElasticNet(
-    alpha=0,
+    alpha=200,
     l1_ratio=1,
     fit_intercept=True,
     normalize=False,
@@ -25,37 +21,18 @@ model_out: ElasticNet = ElasticNet(
     tol=0.0001,
     warm_start=False,
     positive=False,
-    random_state=28,
+    random_state=None,
     selection='cyclic'
 ).fit(X, y)
 
-print(model_out.coef_)
-print(model_out.intercept_)
-
-limit_factor_plus = (250 - model_out.intercept_) / (
-    numpy.sum(numpy.fromiter((k for k in model_out.coef_ if k > 0), dtype=numpy.float64))*250
-    )
-
-limit_factor_minus = (model_out.intercept_) / numpy.abs(
-    numpy.sum(numpy.fromiter((k for k in model_out.coef_ if k < 0), dtype=numpy.float64))*250
-    )
-
-limit = numpy.min([limit_factor_plus, limit_factor_minus])
-print(limit_factor_plus, limit_factor_minus, limit)
-model_out.coef_ = model_out.coef_*limit
-
-print(model_out.coef_)
-print(model_out.intercept_)
-
-joblib.dump(model_out, "models/avaliacao_chute_lr.sav")
-
-quit()
+joblib.dump(model_out, "models/avaliacao_passe_lr.sav")
 
 x_axis: numpy.ndarray = numpy.fromiter(range(0, 200, 1), dtype=numpy.uint16)
 score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 score_test: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 
 start: float = time.time()
+
 for j, i in enumerate(x_axis):
 
     [X_train, X_test, y_train, y_test] = train_test_split(X,
@@ -64,7 +41,7 @@ for j, i in enumerate(x_axis):
                                                           random_state=i)
 
     model: ElasticNet = ElasticNet(
-        alpha=0,
+        alpha=200,
         l1_ratio=1,
         fit_intercept=True,
         normalize=False,
@@ -74,12 +51,13 @@ for j, i in enumerate(x_axis):
         tol=0.0001,
         warm_start=False,
         positive=False,
-        random_state=2*i,
+        random_state=None,
         selection='cyclic'
     ).fit(X_train, y_train)
 
     score_test[j] = model.score(X_test, y_test)
     score_train[j] = model.score(X_train, y_train)
+
 
 end: float = time.time()
 
