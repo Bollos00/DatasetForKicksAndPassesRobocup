@@ -6,8 +6,8 @@ import analise_data_auxiliar
 # from sklearn.model_selection import train_test_split
 
 array_passe: numpy.ndarray = numpy.concatenate([
-    analise_auxiliar.get_array_from_pattern("LOG2019/ALL/*Passe.csv"),
-    analise_auxiliar.get_array_from_pattern("LOG2017/ALL/*Passe.csv")
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ALL/*Passe.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2017/ALL/*Passe.csv")
 ])
 X: numpy.ndarray = array_passe[:, [1, 2, 3, 4, 5, 6, 7, 8]]
 y: numpy.ndarray = array_passe[:, 0]

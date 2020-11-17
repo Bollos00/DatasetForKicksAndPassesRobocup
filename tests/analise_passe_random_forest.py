@@ -5,7 +5,7 @@ import joblib
 import time
 import analise_auxiliar
 
-array_passe: numpy.ndarray = analise_auxiliar.get_array_from_pattern("LOG2019/ALL/*Passe.csv")
+array_passe: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ALL/*Passe.csv")
 
 y: numpy.ndarray = array_passe[:, 0]
 X: numpy.ndarray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]

@@ -7,11 +7,11 @@ from sklearn.model_selection import train_test_split
 
 
 array_chute: numpy.ndarray = numpy.concatenate([
-    analise_auxiliar.get_array_from_pattern("LOG2019/ER_FORCE/ATA/*Chute.csv"),
-    analise_auxiliar.get_array_from_pattern("LOG2019/ZJUNlict/ATA/*Chute.csv")
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ER_FORCE/ATA/*Chute.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ZJUNlict/ATA/*Chute.csv")
 ])
 
-# array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("LOG2019/ER_FORCE/ATA/*Chute.csv")
+# array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ER_FORCE/ATA/*Chute.csv")
 
 X: numpy.ndarray = array_chute[:, [1, 2, 3]]
 y: numpy.ndarray = array_chute[:, 0]

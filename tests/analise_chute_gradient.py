@@ -7,8 +7,8 @@ import time
 import analise_auxiliar
 
 array_chute: numpy.ndarray = numpy.concatenate([
-    analise_auxiliar.get_array_from_pattern("LOG2019/ER_FORCE/ATA/*Chute.csv"),
-    analise_auxiliar.get_array_from_pattern("LOG2019/ZJUNlict/ATA/*Chute.csv")
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ER_FORCE/ATA/*Chute.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ZJUNlict/ATA/*Chute.csv")
 ])
 
 y: numpy.ndarray = array_chute[:, 0]
