@@ -1,1 +1,2 @@
 *.log.gz
+**/__pycache__
