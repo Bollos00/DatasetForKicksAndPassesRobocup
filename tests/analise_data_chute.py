@@ -6,15 +6,22 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 
 
-array_chute: numpy.ndarray = numpy.concatenate([
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ER_FORCE/ATA/*Chute.csv"),
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ZJUNlict/ATA/*Chute.csv")
-])
+# array_chute: numpy.ndarray = numpy.concatenate([
+#     analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/RoboCin/ATA/*Chute.csv"),
+#     analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/RoboFEI/ATA/*Chute.csv"),
+#     analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/Maracatronics/ATA/*Chute.csv")
+# ])
 
-# array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ER_FORCE/ATA/*Chute.csv")
+array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/ALL/*Chute.csv")
 
-X: numpy.ndarray = array_chute[:, [1, 2, 3]]
-y: numpy.ndarray = array_chute[:, 0]
+X, y = analise_auxiliar.get_x_y_shoots(array_chute, 1.01)
+
+# array_chute: numpy.ndarray = numpy.concatenate([
+#     analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ER_FORCE/ATA/*Chute.csv"),
+#     analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ZJUNlict/ATA/*Chute.csv")
+# ])
+# X, y = analise_auxiliar.get_x_y_shoots(array_chute)
+
 
 # print(X.shape)
 # print(X)
@@ -66,6 +73,7 @@ angulo_livre_caminho: numpy.ndarray = X[:, 0]  # X is 1 and Y is 0
 distancia_bola: numpy.ndarray = X[:, 1]
 liberdade_marcacao: numpy.ndarray = X[:, 2]
 
-analise_data_auxiliar.plot_data_analise(angulo_livre_caminho, y, x_label="Ângulo livre caminho", poly_degree=1)
-analise_data_auxiliar.plot_data_analise(distancia_bola, y, x_label="Distância bola", poly_degree=1)
-analise_data_auxiliar.plot_data_analise(liberdade_marcacao, y, x_label="Liberdade marcação", poly_degree=1)
+degree = 1
+analise_data_auxiliar.plot_data_analise(angulo_livre_caminho, y, x_label="Ângulo livre caminho", poly_degree=degree)
+analise_data_auxiliar.plot_data_analise(distancia_bola, y, x_label="Distância bola", poly_degree=degree)
+analise_data_auxiliar.plot_data_analise(liberdade_marcacao, y, x_label="Liberdade marcação", poly_degree=degree)
