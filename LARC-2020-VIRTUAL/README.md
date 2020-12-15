@@ -3,7 +3,7 @@ This Database is made available under the Open Database License: http://opendata
 Note: a copy of the license is available on the main directory of this repository.
 
 
-This database was generated with the [LogAnalyserRoboFei-SSL](https://gitlab.com/robofei/ssl/LogAnalyserRoboFei-SSL) software under versions [1.0](https://gitlab.com/robofei/ssl/LogAnalyserRoboFei-SSL/-/releases/v1.0) and [1.0.1](https://gitlab.com/robofei/ssl/LogAnalyserRoboFei-SSL/-/releases/v1.0.1) using the log files of LARC matches avaliable on the follow link:
+This database was generated with the [LogAnalyserRoboFei-SSL](https://gitlab.com/robofei/ssl/LogAnalyserRoboFei-SSL) software under version [1.0.2](https://gitlab.com/robofei/ssl/LogAnalyserRoboFei-SSL/-/releases/v1.0.2) using the log files of LARC matches avaliable on the follow link:
 * https://drive.google.com/u/0/uc?id=18T9UHCwCpJEsDDjihfhHG9-6bxq87x3h&export=download
 
 Note: to download the log files with `wget`, use the follow command:
