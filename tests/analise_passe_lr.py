@@ -3,46 +3,48 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import ElasticNet
 import joblib
 import time
+from random import randint
 import analise_auxiliar
 
-array_passe: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ALL/*Passe.csv")
+array_passe: numpy.ndarray = analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/ALL/*Passe.csv")
 
-y: numpy.ndarray = array_passe[:, 0]
-X: numpy.ndarray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
+X, y = analise_auxiliar.get_x_y_passes(array_passe, 1.01)
 
-model_out: ElasticNet = ElasticNet(
-    alpha=200,
-    l1_ratio=1,
-    fit_intercept=True,
-    normalize=False,
-    precompute=False,
-    max_iter=1000,
-    copy_X=True,
-    tol=0.0001,
-    warm_start=False,
-    positive=False,
-    random_state=None,
-    selection='cyclic'
-).fit(X, y)
+# model_out: ElasticNet = ElasticNet(
+#     alpha=200,
+#     l1_ratio=1,
+#     fit_intercept=True,
+#     normalize=False,
+#     precompute=False,
+#     max_iter=1000,
+#     copy_X=True,
+#     tol=0.0001,
+#     warm_start=False,
+#     positive=False,
+#     random_state=None,
+#     selection='cyclic'
+# ).fit(X, y)
+#
+# joblib.dump(model_out, "models/avaliacao_passe_lr.sav")
 
-joblib.dump(model_out, "models/avaliacao_passe_lr.sav")
-
-x_axis: numpy.ndarray = numpy.fromiter(range(0, 200, 1), dtype=numpy.uint16)
+x_axis: numpy.ndarray = numpy.fromiter(range(0, 100, 1), dtype=numpy.uint16)
 score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 score_test: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 
 start: float = time.time()
+
+r = randint(0, 999)
 
 for j, i in enumerate(x_axis):
 
     [X_train, X_test, y_train, y_test] = train_test_split(X,
                                                           y,
                                                           test_size=.2,
-                                                          random_state=i)
+                                                          random_state=r)
 
     model: ElasticNet = ElasticNet(
-        alpha=200,
-        l1_ratio=1,
+        alpha=50,
+        l1_ratio=.5,
         fit_intercept=True,
         normalize=False,
         precompute=False,
@@ -51,7 +53,7 @@ for j, i in enumerate(x_axis):
         tol=0.0001,
         warm_start=False,
         positive=False,
-        random_state=None,
+        random_state=2*r,
         selection='cyclic'
     ).fit(X_train, y_train)
 
