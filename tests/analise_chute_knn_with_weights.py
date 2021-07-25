@@ -6,12 +6,13 @@ from sklearn.neighbors import RadiusNeighborsRegressor
 import joblib
 import time
 import analise_auxiliar
+from random import randint
 from typing import List
 
 
 def customized_weights_linear(distances_weights: numpy.ndarray) -> numpy.ndarray:
 
-    MAXIMUM_DISTANCE: numpy.float64 = numpy.float64(50)
+    MAXIMUM_DISTANCE: numpy.float64 = numpy.float64(100)
     # create a new array weights with the same dimension distances and fill
     # the array with 0 element.
     for i, var in enumerate(distances_weights):  # for each prediction:
@@ -28,30 +29,34 @@ def customized_weights_linear(distances_weights: numpy.ndarray) -> numpy.ndarray
     return distances_weights
 
 
-array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ALL/*Chute.csv")
+array_chute: numpy.ndarray = numpy.concatenate([
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Shoot.csv"),
+    # analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Shoot.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Shoot.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Shoot.csv")
+])
 
-y: numpy.ndarray = array_chute[:, 0]
-X: numpy.ndarray = array_chute[:, [1, 2, 3]]
+X, y = analise_auxiliar.get_x_y_shoots(array_chute, 1.01)
 
-knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=15,
-                                                   weights=customized_weights_linear,
-                                                   n_jobs=1).fit(X, y)
+# knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=15,
+#                                                    weights=customized_weights_linear,
+#                                                    n_jobs=1).fit(X, y)
 
-joblib.dump(knn_out, "models/avaliacao_chute_knn_with_weights.sav")
+# joblib.dump(knn_out, "models/avaliacao_chute_knn_with_weights.sav")
 
-x_axis: List[int] = list(range(1, 100, 1))
-score_train: List[float] = []
-score_test: List[float] = []
+x_axis: numpy.ndarray = numpy.fromiter(range(1, 100, 1), dtype=numpy.uint16)
+score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
+score_test: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 
 start: float = time.time()
-for i in x_axis:
 
-    [X_train, X_test, y_train, y_test] = train_test_split(X,
-                                                          y,
-                                                          test_size=.2,
-                                                          random_state=i)
+for j, i in enumerate(x_axis):
 
-    knn: KNeighborsRegressor = KNeighborsRegressor(
+    [X_train, X_test, y_train, y_test] = train_test_split(
+        X, y, test_size=.2, random_state=randint(0, 1000)
+        )
+
+    model: KNeighborsRegressor = KNeighborsRegressor(
         n_neighbors=10,
         weights=customized_weights_linear,
         algorithm='auto',
@@ -62,19 +67,8 @@ for i in x_axis:
         n_jobs=1
         ).fit(X_train, y_train)
 
-    # knn: RadiusNeighborsRegressor = RadiusNeighborsRegressor(
-    #     radius=50,
-    #     weights=customized_weights_linear,
-    #     algorithm='auto',
-    #     leaf_size=30,
-    #     p=2,
-    #     metric='minkowski',
-    #     metric_params=None,
-    #     n_jobs=1
-    #     ).fit(X_train, y_train)
-
-    score_test.append(knn.score(X_test, y_test))
-    score_train.append(knn.score(X_train, y_train))
+    score_test[j] = model.score(X_test, y_test)
+    score_train[j] = model.score(X_train, y_train)
 
 end: float = time.time()
 

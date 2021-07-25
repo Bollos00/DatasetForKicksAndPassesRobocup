@@ -14,7 +14,14 @@ from sklearn.tree import DecisionTreeRegressor
 #     analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/Maracatronics/ATA/*Chute.csv")
 # ])
 
-array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/ALL/*Chute.csv")
+# array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/ALL/*Chute.csv")
+
+array_chute: numpy.ndarray = numpy.concatenate([
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Shoot.csv"),
+    # analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Shoot.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Shoot.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Shoot.csv")
+])
 
 X, y = analise_auxiliar.get_x_y_shoots(array_chute, 1.01)
 
@@ -44,7 +51,7 @@ X, y = analise_auxiliar.get_x_y_shoots(array_chute, 1.01)
 #
 # joblib.dump(model_out, "models/avaliacao_chute_ada_boost.sav")
 
-x_axis: numpy.ndarray = numpy.fromiter(range(1, 200, 1), dtype=numpy.uint16)
+x_axis: numpy.ndarray = numpy.fromiter(range(1, 100, 1), dtype=numpy.uint16)
 score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 score_test: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 
@@ -59,22 +66,22 @@ for j, i in enumerate(x_axis):
     tree_aux: DecisionTreeRegressor = DecisionTreeRegressor(
         criterion='mse',
         splitter='best',
-        max_depth=3,
-        min_samples_split=100*1e-3,
-        min_samples_leaf=100*1e-3,
-        min_weight_fraction_leaf=100*1e-3,
+        max_depth=2,
+        min_samples_split=200*1e-3,
+        min_samples_leaf=200*1e-3,
+        min_weight_fraction_leaf=0*1e-3,
         max_features='auto',
         random_state=randint(0, 1000),
-        max_leaf_nodes=5,
+        max_leaf_nodes=None,
         min_impurity_decrease=0,
         min_impurity_split=None,
         ccp_alpha=0
     )
     model: AdaBoostRegressor = AdaBoostRegressor(
         base_estimator=tree_aux,
-        n_estimators=40,
-        learning_rate=100*1e-3,
-        loss='linear',
+        n_estimators=20,
+        learning_rate=700*1e-3,
+        loss='square',
         random_state=randint(0, 1000)
     ).fit(X_train, y_train)
 

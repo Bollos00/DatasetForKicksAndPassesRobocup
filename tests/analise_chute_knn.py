@@ -6,32 +6,38 @@ from matplotlib import pyplot
 import joblib
 import time
 import analise_auxiliar
+from random import randint
 from typing import List
 
-pyplot.style.use('dark_background')
+array_chute: numpy.ndarray = numpy.concatenate([
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Shoot.csv"),
+    # analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Shoot.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Shoot.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Shoot.csv")
+])
 
-array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ALL/*Chute.csv")
+X, y = analise_auxiliar.get_x_y_shoots(array_chute, 1.01)
 
-y: numpy.ndarray = array_chute[:, 0]
-X: numpy.ndarray = array_chute[:, [1, 2, 3]]
+# knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=12,
+#                                                    weights='uniform',
+#                                                    n_jobs=1).fit(X, y)
 
-knn_out: KNeighborsRegressor = KNeighborsRegressor(n_neighbors=12,
-                                                   weights='uniform',
-                                                   n_jobs=1).fit(X, y)
+# joblib.dump(knn_out, "models/avaliacao_chute_knn.sav")
 
-joblib.dump(knn_out, "models/avaliacao_chute_knn.sav")
-
-x_axis: List[int] = list(range(1, 100, 1))
-score_train: List[float] = []
-score_test: List[float] = []
+x_axis: numpy.ndarray = numpy.fromiter(range(1, 100, 1), dtype=numpy.uint16)
+score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
+score_test: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 
 start: float = time.time()
-for i in x_axis:
 
-    [X_train, X_test, y_train, y_test] = train_test_split(X, y, test_size=.2, random_state=i)
+for j, i in enumerate(x_axis):
 
-    knn: KNeighborsRegressor = KNeighborsRegressor(
-        n_neighbors=12,
+    [X_train, X_test, y_train, y_test] = train_test_split(
+        X, y, test_size=.2, random_state=randint(0, 1000)
+        )
+
+    model: KNeighborsRegressor = KNeighborsRegressor(
+        n_neighbors=15,
         weights='uniform',
         algorithm='auto',
         leaf_size=30,
@@ -42,8 +48,8 @@ for i in x_axis:
         ).fit(X_train, y_train)
     # knn: RadiusNeighborsRegressor = RadiusNeighborsRegressor(radius=5, weights='uniform').fit(X_train, y_train)
 
-    score_test.append(knn.score(X_test, y_test))
-    score_train.append(knn.score(X_train, y_train))
+    score_test[j] = model.score(X_test, y_test)
+    score_train[j] = model.score(X_train, y_train)
 
 end: float = time.time()
 

@@ -8,35 +8,40 @@ import analise_auxiliar
 from random import randint
 from sklearn.tree import DecisionTreeRegressor
 
-array_passe: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ALL/*Passe.csv")
+array_passe: numpy.ndarray = numpy.concatenate([
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboCin/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Pass.csv")
+])
 
-y: numpy.ndarray = array_passe[:, 0]
-X: numpy.ndarray = array_passe[:, [1, 2, 3,  4, 4, 6, 7, 8]]
+X, y = analise_auxiliar.get_x_y_passes(array_passe, 1.12)
 
-tree_aux_out: DecisionTreeRegressor = DecisionTreeRegressor(
-    criterion='mse',
-    splitter='best',
-    max_depth=3,
-    min_samples_split=100*1e-3,
-    min_samples_leaf=100*1e-3,
-    min_weight_fraction_leaf=100*1e-3,
-    max_features='auto',
-    random_state=2,
-    max_leaf_nodes=5,
-    min_impurity_decrease=0,
-    min_impurity_split=None,
-    presort='deprecated',
-    ccp_alpha=0
-)
-model_out: AdaBoostRegressor = AdaBoostRegressor(
-    base_estimator=tree_aux_out,
-    n_estimators=40,
-    learning_rate=100*1e-3,
-    loss='linear',
-    random_state=2
-).fit(X, y)
-
-joblib.dump(model_out, "models/avaliacao_passe_ada_boost.sav")
+# tree_aux_out: DecisionTreeRegressor = DecisionTreeRegressor(
+#     criterion='mse',
+#     splitter='best',
+#     max_depth=3,
+#     min_samples_split=100*1e-3,
+#     min_samples_leaf=100*1e-3,
+#     min_weight_fraction_leaf=100*1e-3,
+#     max_features='auto',
+#     random_state=2,
+#     max_leaf_nodes=5,
+#     min_impurity_decrease=0,
+#     min_impurity_split=None,
+#     presort='deprecated',
+#     ccp_alpha=0
+# )
+# model_out: AdaBoostRegressor = AdaBoostRegressor(
+#     base_estimator=tree_aux_out,
+#     n_estimators=40,
+#     learning_rate=100*1e-3,
+#     loss='linear',
+#     random_state=2
+# ).fit(X, y)
+#
+# joblib.dump(model_out, "models/avaliacao_passe_ada_boost.sav")
 
 x_axis: numpy.ndarray = numpy.fromiter(range(1, 50, 1), dtype=numpy.uint16)
 score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
@@ -46,33 +51,34 @@ start: float = time.time()
 
 for j, i in enumerate(x_axis):
 
+    r = randint(0, 999)
     [X_train, X_test, y_train, y_test] = train_test_split(
-        X, y, test_size=.2, random_state=i
+        X, y, test_size=.2, random_state=r*2
         )
 
     tree_aux: DecisionTreeRegressor = DecisionTreeRegressor(
         criterion='mse',
         splitter='best',
-        max_depth=3,
-        min_samples_split=100*1e-3,
-        min_samples_leaf=100*1e-3,
-        min_weight_fraction_leaf=100*1e-3,
+        max_depth=2,
+        min_samples_split=200*1e-3,
+        min_samples_leaf=200*1e-3,
+        min_weight_fraction_leaf=0*1e-3,
         max_features='auto',
-        random_state=2,
-        max_leaf_nodes=5,
+        random_state=randint(0, 1000),
+        max_leaf_nodes=None,
         min_impurity_decrease=0,
         min_impurity_split=None,
-        presort='deprecated',
         ccp_alpha=0
     )
     model: AdaBoostRegressor = AdaBoostRegressor(
         base_estimator=tree_aux,
-        n_estimators=40,
+        n_estimators=30,
         learning_rate=100*1e-3,
-        loss='linear',
-        random_state=2
+        loss='square',
+        random_state=randint(0, 1000)
     ).fit(X_train, y_train)
-    print(model.feature_importances_, '\t', i)
+
+    # print(model.feature_importances_, '\t', i)
 
     score_test[j] = model.score(X_test, y_test)
     score_train[j] = model.score(X_train, y_train)
