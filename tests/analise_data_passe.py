@@ -5,16 +5,16 @@ import analise_data_auxiliar
 # from sklearn.linear_model import LinearRegression
 # from sklearn.model_selection import train_test_split
 
-array_passe = analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/ALL/*Passe.csv")
-# array_passe: numpy.ndarray = numpy.concatenate([
-#     analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/Maracatronics/ATA/*Passe.csv"),
-#     analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/RoboCin/ATA/*Passe.csv"),
-#     analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/RoboFEI/ATA/*Passe.csv")
-# ])
-X, y = analise_auxiliar.get_x_y_passes(array_passe, 1.01)
+array_passe: numpy.ndarray = numpy.concatenate([
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboCin/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Pass.csv")
+])
 
-# array_passe: numpy.ndarray = analise_auxiliar.get_array_from_pattern("ROBOCUP-2019/ALL/*Passe.csv")
-# X, y = analise_auxiliar.get_x_y_passes(array_passe)
+X, y = analise_auxiliar.get_x_y_passes(array_passe, 1.12)
+
 
 # print(X.shape)
 # print(X)
@@ -81,7 +81,7 @@ distancia_receptor_gol: numpy.ndarray = X[:, 5]
 liberdade_marcacao_passador: numpy.ndarray = X[:, 6]
 delta_xis: numpy.ndarray = X[:, 7]
 
-degree = 3
+degree = 5
 
 analise_data_auxiliar.plot_data_analise(angulo_livre_passe, y, x_label="Ângulo livre passe", poly_degree=degree)
 analise_data_auxiliar.plot_data_analise(distancia_passe, y, x_label="Distância passe", poly_degree=degree)

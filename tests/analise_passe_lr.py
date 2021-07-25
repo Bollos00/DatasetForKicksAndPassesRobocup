@@ -6,9 +6,15 @@ import time
 from random import randint
 import analise_auxiliar
 
-array_passe: numpy.ndarray = analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/ALL/*Passe.csv")
+array_passe: numpy.ndarray = numpy.concatenate([
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboCin/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Pass.csv")
+])
 
-X, y = analise_auxiliar.get_x_y_passes(array_passe, 1.01)
+X, y = analise_auxiliar.get_x_y_passes(array_passe, 1.12)
 
 # model_out: ElasticNet = ElasticNet(
 #     alpha=200,
@@ -40,22 +46,24 @@ for j, i in enumerate(x_axis):
     [X_train, X_test, y_train, y_test] = train_test_split(X,
                                                           y,
                                                           test_size=.2,
-                                                          random_state=r)
+                                                          random_state=randint(0, 1000))
 
     model: ElasticNet = ElasticNet(
-        alpha=50,
+        alpha=.01,
         l1_ratio=.5,
         fit_intercept=True,
         normalize=False,
         precompute=False,
         max_iter=1000,
         copy_X=True,
-        tol=0.0001,
+        tol=1e-3,
         warm_start=False,
         positive=False,
-        random_state=2*r,
+        random_state=randint(0, 1000),
         selection='cyclic'
     ).fit(X_train, y_train)
+
+    print(model.coef_)
 
     score_test[j] = model.score(X_test, y_test)
     score_train[j] = model.score(X_train, y_train)

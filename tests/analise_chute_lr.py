@@ -5,6 +5,7 @@ from sklearn.linear_model import ElasticNet
 from matplotlib import pyplot
 import joblib
 import time
+from random import randint
 import analise_auxiliar
 
 # array_chute: numpy.ndarray = numpy.concatenate([
@@ -13,7 +14,14 @@ import analise_auxiliar
 #     analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/Maracatronics/ATA/*Chute.csv")
 # ])
 
-array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/ALL/*Chute.csv")
+# array_chute: numpy.ndarray = analise_auxiliar.get_array_from_pattern("LARC-2020-VIRTUAL/ALL/*Chute.csv")
+
+array_chute: numpy.ndarray = numpy.concatenate([
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Shoot.csv"),
+    # analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Shoot.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Shoot.csv"),
+    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Shoot.csv")
+])
 
 X, y = analise_auxiliar.get_x_y_shoots(array_chute, 1.01)
 
@@ -44,20 +52,20 @@ for j, i in enumerate(x_axis):
     [X_train, X_test, y_train, y_test] = train_test_split(X,
                                                           y,
                                                           test_size=.2,
-                                                          random_state=i)
+                                                          random_state=randint(0, 1000))
 
     model: ElasticNet = ElasticNet(
-        alpha=0,
-        l1_ratio=1,
+        alpha=.01,
+        l1_ratio=.5,
         fit_intercept=True,
         normalize=False,
         precompute=False,
         max_iter=1000,
         copy_X=True,
-        tol=0.0001,
+        tol=1e-3,
         warm_start=False,
         positive=False,
-        random_state=2,
+        random_state=randint(0, 1000),
         selection='cyclic'
     ).fit(X_train, y_train)
 

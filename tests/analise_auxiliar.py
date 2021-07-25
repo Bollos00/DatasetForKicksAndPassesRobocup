@@ -9,7 +9,7 @@ def get_array_from_pattern(pattern):
 
     array = []
 
-    for f in glob("../{}".format(pattern)):
+    for f in glob("./{}".format(pattern)):
         array.append(
             numpy.genfromtxt(
                 f,
