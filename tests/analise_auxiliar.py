@@ -3,7 +3,11 @@ import numpy
 from typing import List
 from matplotlib import pyplot
 
-pyplot.style.use('dark_background')
+pyplot.style.use('bmh')
+# pyplot.style.use('dark_background')
+
+pyplot.rc('font', size=14)
+
 
 def get_array_from_pattern(pattern):
 
@@ -39,6 +43,7 @@ def print_time_of_each_prediction(start: float, end: float, x_size: int, y_size:
     print("Time of each prediction: {:.3f} us".format(
         (end-start)*1e6/(x_size*y_size))
           )
+
 
 def print_score(score_test: float, score_train: float):
     print("Score test: {:.3f}/100".format(100*score_test))

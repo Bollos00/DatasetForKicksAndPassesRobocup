@@ -35,19 +35,20 @@ def plot_data_analise(array_x: numpy.ndarray,
     for i in range(5):
         for j in range(5):
             generator = (
-                a for a, b in zip(array_x, array_y) if (
-                    numpy.int64(a) in range(numpy.int64(i*step), numpy.int64((i+1)*step + 1)))
-                and (numpy.int64(b) in range(numpy.int64(j*50), numpy.int64((j+1)*50 + 1))
-                     )
+                1 for a, b in zip(array_x, array_y) if (
+                    (a >= i*step and a < (i+1)*step + 1)
+                    and (b >= j*step and b < (j+1)*step + 1)
                 )
+            )
             pesos[i, j] = sum(1 for k in generator)
     print(pesos, '\n')
+    print(numpy.sum(pesos))
     for i in range(5):
         for j in range(5):
             pyplot.scatter(step/2 + step*i,
                            25 + 50*j,
-                           s=pesos[i, j]*step,
-                           c="#00ff00")
+                           s=pesos[i, j]**2,
+                           c="#0000ff")
 
     pyplot.xlabel(x_label)
     pyplot.ylabel("Avaliação")
