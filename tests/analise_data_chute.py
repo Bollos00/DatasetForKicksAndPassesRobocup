@@ -80,13 +80,15 @@ liberdade_marcacao: numpy.ndarray = X[:, 2]
 
 print(angulo_livre_caminho.shape)
 
+y = y * .98
+
 degree = 1
 analise_data_auxiliar.plot_data_analise(
-    angulo_livre_caminho, y*.9,
+    angulo_livre_caminho, y,
     x_label="Ângulo livre do caminho da bola até o gol adversário", poly_degree=degree)
 analise_data_auxiliar.plot_data_analise(
-    distancia_bola, y*.9,
+    distancia_bola, y,
     x_label="Distância da bola ao gol adversário", poly_degree=degree)
 analise_data_auxiliar.plot_data_analise(
-    liberdade_marcacao, y*.9,
+    liberdade_marcacao, y,
     x_label="Marcação do adversário", poly_degree=degree)

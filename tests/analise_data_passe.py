@@ -6,11 +6,16 @@ import analise_data_auxiliar
 # from sklearn.model_selection import train_test_split
 
 array_passe: numpy.ndarray = numpy.concatenate([
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Pass.csv"),
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Pass.csv"),
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboCin/ATA/*Pass.csv"),
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Pass.csv"),
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Pass.csv")
+    analise_auxiliar.get_array_from_pattern(
+        "ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern(
+        "ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern(
+        "ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboCin/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern(
+        "ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern(
+        "ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Pass.csv")
 ])
 
 X, y = analise_auxiliar.get_x_y_passes(array_passe, 1.12)
@@ -81,13 +86,32 @@ distancia_receptor_gol: numpy.ndarray = X[:, 5]
 liberdade_marcacao_passador: numpy.ndarray = X[:, 6]
 delta_xis: numpy.ndarray = X[:, 7]
 
-degree = 5
+# print(angulo_livre_passe.shape)
+# print(distancia_passe.shape)
+# print(liberdade_marcacao_receptor.shape)
+# print(angulo_redirect.shape)
+# print(angulo_livre_chute_receptor.shape)
+#
+# for n in angulo_livre_passe:
+#     print(n)
 
-analise_data_auxiliar.plot_data_analise(angulo_livre_passe, y, x_label="Ângulo livre passe", poly_degree=degree)
-analise_data_auxiliar.plot_data_analise(distancia_passe, y, x_label="Distância passe", poly_degree=degree)
-analise_data_auxiliar.plot_data_analise(liberdade_marcacao_receptor, y, x_label="Liberdade marcação receptor", poly_degree=degree)
-analise_data_auxiliar.plot_data_analise(angulo_redirect, y, x_label="Ângulo redirect", poly_degree=degree)
-analise_data_auxiliar.plot_data_analise(angulo_livre_chute_receptor, y, x_label="Ângulo livre chute receptor", poly_degree=degree)
-analise_data_auxiliar.plot_data_analise(distancia_receptor_gol, y, x_label="Distância receptor gol", poly_degree=degree)
-analise_data_auxiliar.plot_data_analise(liberdade_marcacao_passador, y, x_label="Liberdade marcação passador", poly_degree=degree)
+
+degree = 1
+
+y = y*.98
+
+analise_data_auxiliar.plot_data_analise(
+    angulo_livre_passe, y, x_label="Ângulo livre passe", poly_degree=degree)
+analise_data_auxiliar.plot_data_analise(
+    distancia_passe, y, x_label="Distância passe", poly_degree=degree)
+analise_data_auxiliar.plot_data_analise(
+    liberdade_marcacao_receptor, y, x_label="Marcação sobre o receptor", poly_degree=degree)
+analise_data_auxiliar.plot_data_analise(
+    angulo_redirect, y, x_label="Ângulo redirect", poly_degree=degree)
+analise_data_auxiliar.plot_data_analise(
+    angulo_livre_chute_receptor, y, x_label="Ângulo livre chute receptor", poly_degree=degree)
+analise_data_auxiliar.plot_data_analise(
+    distancia_receptor_gol, y, x_label="Distância receptor gol", poly_degree=degree)
+analise_data_auxiliar.plot_data_analise(
+    liberdade_marcacao_passador, y, x_label="Marcação sobre o passador", poly_degree=degree)
 analise_data_auxiliar.plot_data_analise(delta_xis, y, x_label="Delta xis", poly_degree=degree)

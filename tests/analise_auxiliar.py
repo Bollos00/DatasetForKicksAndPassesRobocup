@@ -3,8 +3,8 @@ import numpy
 from typing import List
 from matplotlib import pyplot
 
-pyplot.style.use('bmh')
-# pyplot.style.use('dark_background')
+# pyplot.style.use('bmh')
+pyplot.style.use('dark_background')
 
 pyplot.rc('font', size=14)
 

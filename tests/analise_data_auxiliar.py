@@ -5,53 +5,52 @@ from matplotlib import pyplot
 
 def plot_data_analise(array_x: numpy.ndarray,
                       array_y: numpy.ndarray,
-                      maximum: numpy.float64 = 250,
+                      maximum: numpy.float64 = 270,
                       x_label: str = "???",
                       poly_degree=5):
 
-    step = maximum/5
-
-    if(maximum < 100):
-        array_x = array_x*100/maximum
-        maximum = numpy.max(array_x)
-        step = maximum/5
+    step = maximum/6
 
     z = numpy.polyfit(array_x, array_y, poly_degree)
     p = numpy.poly1d(z)
 
-    pyplot.plot(range(numpy.int64(step/2), numpy.int64(maximum+1-step/2)),
-                p(range(numpy.int64(step/2), numpy.int64(maximum+1-step/2))),
+    pyplot.plot(range(int(step/2), int(maximum+1-step/2)),
+                p(range(int(step/2), int(maximum+1-step/2))),
                 "r--")
 
-    if(step > 1000):
-        pyplot.xlabel(x_label)
-        pyplot.ylabel("Avaliação")
-        pyplot.axis([0, maximum+1, 0, 251])
-        pyplot.show()
-        return
+    # if(step > 1000):
+    #     pyplot.xlabel(x_label)
+    #     pyplot.ylabel("Avaliação")
+    #     pyplot.axis([0, maximum+1, 0, 251])
+    #     pyplot.show()
+    #     return
 
-    pesos: numpy.ndarray = numpy.full((5, 5), 0, dtype=numpy.uint16)
+    pesos: numpy.ndarray = numpy.full((6, 6), 0, dtype=numpy.uint16)
 
-    for i in range(5):
-        for j in range(5):
+    for i in range(6):
+        for j in range(6):
             generator = (
                 1 for a, b in zip(array_x, array_y) if (
-                    (a >= i*step and a < (i+1)*step + 1)
-                    and (b >= j*step and b < (j+1)*step + 1)
+                    (a >= i*step and a < (i+1)*step)
+                    and (b >= j*step and b < (j+1)*step)
                 )
             )
             pesos[i, j] = sum(1 for k in generator)
-    print(pesos, '\n')
+
     print(numpy.sum(pesos))
-    for i in range(5):
-        for j in range(5):
+    print(pesos, '\n')
+
+    for i in range(6):
+        for j in range(6):
             pyplot.scatter(step/2 + step*i,
-                           25 + 50*j,
+                           step/2 + step*j,
                            s=pesos[i, j]**2,
                            c="#0000ff")
 
     pyplot.xlabel(x_label)
     pyplot.ylabel("Avaliação")
-    pyplot.axis([0, maximum+1, 0, 251])
-
+    pyplot.xticks([45, 90, 135, 180, 225])
+    pyplot.yticks([45, 90, 135, 180, 225])
+    pyplot.axis([0, maximum+1, 0, maximum+1])
+    pyplot.grid(visible=True, axis='both')
     pyplot.show()
