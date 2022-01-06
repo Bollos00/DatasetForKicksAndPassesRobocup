@@ -44,6 +44,8 @@ def print_time_of_each_prediction(start: float, end: float, x_size: int, y_size:
         (end-start)*1e6/(x_size*y_size))
           )
 
+    print("Total time: {:.3f} ms".format((end-start)*1e3))
+
 
 def print_score(score_test: float, score_train: float):
     print("Score test: {:.3f}/100".format(100*score_test))

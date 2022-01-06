@@ -44,7 +44,7 @@ def plot_data_analise(array_x: numpy.ndarray,
         for j in range(6):
             pyplot.scatter(step/2 + step*i,
                            step/2 + step*j,
-                           s=pesos[i, j]**2,
+                           s=(pesos[i, j]*.5)**2,
                            c="#0000ff")
 
     pyplot.xlabel(x_label)
