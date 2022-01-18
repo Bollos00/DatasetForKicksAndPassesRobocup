@@ -36,10 +36,9 @@ cofs = None
 start: float = time.time()
 for j, i in enumerate(x_axis):
 
-    [X_train, X_test, y_train, y_test] = train_test_split(X,
-                                                          y,
-                                                          test_size=.2,
-                                                          random_state=randint(0, 1000))
+    [X_train, X_test, y_train, y_test] = train_test_split(
+        X, y, test_size=.2, random_state=randint(0, 1000)
+    )
 
     model: LinearRegression = LinearRegression(
         fit_intercept=True,
