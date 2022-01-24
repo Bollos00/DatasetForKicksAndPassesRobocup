@@ -9,43 +9,25 @@ from random import randint
 from sklearn.tree import DecisionTreeRegressor
 
 array_passe: numpy.ndarray = numpy.concatenate([
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Pass.csv"),
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Pass.csv"),
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboCin/ATA/*Pass.csv"),
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Pass.csv"),
-    analise_auxiliar.get_array_from_pattern("ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Pass.csv")
+    analise_auxiliar.get_array_from_pattern(
+        "ROBOCUP-2021-VIRTUAL/DIVISION-B/ER_FORCE/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern(
+        "ROBOCUP-2021-VIRTUAL/DIVISION-B/KIKS/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern(
+        "ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboCin/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern(
+        "ROBOCUP-2021-VIRTUAL/DIVISION-B/RoboFEI/ATA/*Pass.csv"),
+    analise_auxiliar.get_array_from_pattern(
+        "ROBOCUP-2021-VIRTUAL/DIVISION-B/TIGERs_Mannheim/ATA/*Pass.csv")
 ])
 
 X, y = analise_auxiliar.get_x_y_passes(array_passe, 1.12)
 
-# tree_aux_out: DecisionTreeRegressor = DecisionTreeRegressor(
-#     criterion='mse',
-#     splitter='best',
-#     max_depth=3,
-#     min_samples_split=100*1e-3,
-#     min_samples_leaf=100*1e-3,
-#     min_weight_fraction_leaf=100*1e-3,
-#     max_features='auto',
-#     random_state=2,
-#     max_leaf_nodes=5,
-#     min_impurity_decrease=0,
-#     min_impurity_split=None,
-#     presort='deprecated',
-#     ccp_alpha=0
-# )
-# model_out: AdaBoostRegressor = AdaBoostRegressor(
-#     base_estimator=tree_aux_out,
-#     n_estimators=40,
-#     learning_rate=100*1e-3,
-#     loss='linear',
-#     random_state=2
-# ).fit(X, y)
-#
-# joblib.dump(model_out, "models/avaliacao_passe_ada_boost.sav")
-
-x_axis: numpy.ndarray = numpy.fromiter(range(1, 50, 1), dtype=numpy.uint16)
+x_axis: numpy.ndarray = numpy.fromiter(range(0, 500, 1), dtype=numpy.uint16)
 score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 score_test: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
+
+cofs = None
 
 start: float = time.time()
 
@@ -57,26 +39,31 @@ for j, i in enumerate(x_axis):
         )
 
     tree_aux: DecisionTreeRegressor = DecisionTreeRegressor(
-        criterion='mse',
+        criterion='squared_error',
         splitter='best',
-        max_depth=2,
-        min_samples_split=200*1e-3,
-        min_samples_leaf=200*1e-3,
-        min_weight_fraction_leaf=0*1e-3,
+        max_depth=3,
+        min_samples_split=1*1e-3,
+        min_samples_leaf=40*1e-3,
+        min_weight_fraction_leaf=0,
         max_features='auto',
         random_state=randint(0, 1000),
         max_leaf_nodes=None,
         min_impurity_decrease=0,
-        min_impurity_split=None,
         ccp_alpha=0
     )
+
     model: AdaBoostRegressor = AdaBoostRegressor(
         base_estimator=tree_aux,
-        n_estimators=30,
-        learning_rate=100*1e-3,
+        n_estimators=40,
+        learning_rate=50*1e-3,
         loss='square',
         random_state=randint(0, 1000)
     ).fit(X_train, y_train)
+
+    if cofs is None:
+        cofs = model.feature_importances_
+    else:
+        cofs += model.feature_importances_
 
     # print(model.feature_importances_, '\t', i)
 
@@ -88,4 +75,7 @@ end: float = time.time()
 analise_auxiliar.print_time_of_each_prediction(start, end, numpy.size(x_axis), numpy.size(y))
 analise_auxiliar.print_score(numpy.mean(score_test), numpy.mean(score_train))
 
-analise_auxiliar.plot_results(x_axis, score_test, score_train)
+numpy.set_printoptions(precision=0)
+print(f'Coeficientes: {100*cofs/cofs.sum()}')
+
+# analise_auxiliar.plot_results(x_axis, score_test, score_train)

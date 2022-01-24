@@ -29,7 +29,7 @@ array_chute: numpy.ndarray = numpy.concatenate([
 
 X, y = analise_auxiliar.get_x_y_shoots(array_chute, 1.01)
 
-x_axis: numpy.ndarray = numpy.fromiter(range(0, 50, 1), dtype=numpy.uint16)
+x_axis: numpy.ndarray = numpy.fromiter(range(0, 500, 1), dtype=numpy.uint16)
 score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 score_test: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 
@@ -47,8 +47,8 @@ for j, i in enumerate(x_axis):
         criterion='squared_error',
         splitter='best',
         max_depth=2,
-        min_samples_split=100*1e-3,
-        min_samples_leaf=200*1e-3,
+        min_samples_split=1*1e-3,
+        min_samples_leaf=100*1e-3,
         min_weight_fraction_leaf=0,
         max_features='auto',
         random_state=randint(0, 1000),
@@ -58,8 +58,8 @@ for j, i in enumerate(x_axis):
     )
     model: AdaBoostRegressor = AdaBoostRegressor(
         base_estimator=tree_aux,
-        n_estimators=35,
-        learning_rate=150*1e-3,
+        n_estimators=30,
+        learning_rate=100*1e-3,
         loss='square',
         random_state=randint(0, 1000)
     ).fit(X_train, y_train)

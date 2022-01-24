@@ -3,7 +3,6 @@ import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
 from matplotlib import pyplot
-import joblib
 import time
 from random import randint
 import analise_auxiliar
