@@ -2,7 +2,6 @@
 import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import AdaBoostRegressor
-import joblib
 import time
 import analise_auxiliar
 from random import randint
@@ -33,10 +32,9 @@ start: float = time.time()
 
 for j, i in enumerate(x_axis):
 
-    r = randint(0, 999)
     [X_train, X_test, y_train, y_test] = train_test_split(
-        X, y, test_size=.2, random_state=r*2
-        )
+        X, y, test_size=.2, random_state=randint(0, 1000)
+    )
 
     tree_aux: DecisionTreeRegressor = DecisionTreeRegressor(
         criterion='squared_error',
@@ -65,10 +63,11 @@ for j, i in enumerate(x_axis):
     else:
         cofs += model.feature_importances_
 
-    # print(model.feature_importances_, '\t', i)
-
     score_test[j] = model.score(X_test, y_test)
     score_train[j] = model.score(X_train, y_train)
+
+    # analise_auxiliar.find_prediction_time(model, X.shape[1])
+    # exit(0)
 
 end: float = time.time()
 

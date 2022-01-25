@@ -69,10 +69,11 @@ for j, i in enumerate(x_axis):
     else:
         cofs += model.feature_importances_
 
-    # print(model.estimator_weights_)
-
     score_test[j] = model.score(X_test, y_test)
     score_train[j] = model.score(X_train, y_train)
+
+    # analise_auxiliar.find_prediction_time(model, X.shape[1])
+    # exit(0)
 
 end: float = time.time()
 

@@ -2,6 +2,8 @@ from glob import glob
 import numpy
 from typing import List
 from matplotlib import pyplot
+import time
+from sklearn.model_selection import cross_val_score
 
 # pyplot.style.use('bmh')
 pyplot.style.use('dark_background')
@@ -40,10 +42,6 @@ def get_x_y_shoots(array_shoot: numpy.ndarray, version=0):
 
 
 def print_time_of_each_prediction(start: float, end: float, x_size: int, y_size: int):
-    print("Time of each prediction: {:.3f} us".format(
-        (end-start)*1e6/(x_size*y_size))
-          )
-
     print("Total time: {:.3f} ms".format((end-start)*1e3))
 
 
@@ -66,3 +64,35 @@ def plot_results(x_axis: List[int],
     pyplot.grid()
 
     pyplot.show()
+
+
+def find_prediction_time(model, x_size, predictions=10000):
+    X_in = numpy.random.randint(
+        low=0, high=250, size=(predictions, x_size), dtype=numpy.uint8
+    )
+
+    start: float = time.time()
+
+    model.predict(X_in)
+
+    end: float = time.time()
+
+    print("Time of each prediction: {:.3f} us".format((end-start)*1e6/predictions))
+
+
+def knn_feature_accuracy(model, X, y):
+
+    scores = numpy.zeros(shape=(X.shape[1]))
+
+    for i in range(X.shape[1]):
+        X_alt = X[:, i].reshape(-1, 1)
+        scores[i] = cross_val_score(model, X_alt, y, cv=10).mean()
+
+    if numpy.min(scores) < 0:
+        scores -= numpy.min(scores)
+
+    scores /= numpy.sum(scores)
+
+    # print(scores)
+
+    return scores

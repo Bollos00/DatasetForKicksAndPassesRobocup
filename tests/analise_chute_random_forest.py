@@ -2,7 +2,6 @@
 import numpy
 from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestRegressor
-from matplotlib import pyplot
 import time
 from random import randint
 import analise_auxiliar
@@ -61,6 +60,10 @@ for j, i in enumerate(x_axis):
 
     score_test[j] = model.score(X_test, y_test)
     score_train[j] = model.score(X_train, y_train)
+
+    # analise_auxiliar.find_prediction_time(model, X.shape[1])
+    # exit(0)
+
 
 end: float = time.time()
 
