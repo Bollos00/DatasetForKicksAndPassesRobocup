@@ -65,19 +65,9 @@ for j, i in enumerate(x_axis):
 
     if score_test[j] < 0:
         score_test[j] = 0
+        
+    print(f'{j}/{x_axis.shape[0]}')
 
-    importances = permutation_importance(
-        model, X_train, y_train, random_state=randint(0, 1000)
-    )
-
-
-    if cofs is None:
-        cofs = importances.importances_mean
-    else:
-        cofs += importances.importances_mean
-
-    # analise_auxiliar.find_prediction_time(model, X.shape[1])
-    # exit(0)
 
 end: float = time.time()
 

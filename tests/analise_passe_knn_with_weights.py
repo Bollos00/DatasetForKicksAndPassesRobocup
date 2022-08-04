@@ -70,17 +70,6 @@ for j, i in enumerate(x_axis):
     score_train[j] /= kmax
     time_taken[j] /= kmax
 
-    importances = permutation_importance(
-        model, X_train, y_train, random_state=randint(0, 1000)
-    )
-
-    if cofs is None:
-        cofs = importances.importances_mean
-    else:
-        cofs += importances.importances_mean
-
-    print(f'{i}/{x_axis[-1]}')
-
 end: float = time.time()
 
 analise_auxiliar.print_time_of_each_prediction(start, end, numpy.size(x_axis), numpy.size(y))
