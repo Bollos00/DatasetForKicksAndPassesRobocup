@@ -19,7 +19,7 @@ array_chute: numpy.ndarray = numpy.concatenate([
 
 X, y = analise_auxiliar.get_x_y_shoots(array_chute, 1.01)
 
-x_axis: numpy.ndarray = numpy.fromiter(range(1, 5, 1), dtype=numpy.uint16)
+x_axis: numpy.ndarray = numpy.fromiter(range(1, 1000, 50), dtype=numpy.uint16)
 score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 score_test: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 time_taken: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
@@ -30,14 +30,14 @@ start: float = time.time()
 
 for j, i in enumerate(x_axis):
 
-    kmax = 100
+    kmax = 20
     for k in range(kmax):
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=.2, random_state=randint(0, 1000)
         )
 
         model: RandomForestRegressor = RandomForestRegressor(
-            n_estimators=30,
+            n_estimators=i,
             criterion='squared_error',
             max_depth=3,
             bootstrap=True,
@@ -52,9 +52,9 @@ for j, i in enumerate(x_axis):
             cofs += model.feature_importances_
 
         time_a = time.time()
-        # score_test[j] += model.score(X_test, y_test)
-        # score_train[j] += model.score(X_train, y_train)
-        model.predict(X)
+        score_test[j] += model.score(X_test, y_test)
+        score_train[j] += model.score(X_train, y_train)
+        # model.predict(X)
         time_b = time.time()
         
         time_taken[j] += (time_b - time_a)*1e6/(X.shape[0])

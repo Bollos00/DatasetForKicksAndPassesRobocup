@@ -24,27 +24,28 @@ array_passe: numpy.ndarray = numpy.concatenate([
 
 X, y = analise_auxiliar.get_x_y_passes(array_passe, 1.12)
 
-x_axis: numpy.ndarray = numpy.linspace(start=50, stop=200, num=2, dtype=numpy.float32)
+x_axis: numpy.ndarray = numpy.linspace(start=100, stop=300, num=10, dtype=numpy.float32)
 score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 score_test: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 time_taken: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 
 cofs = None
-Weights.set_weight_func(WeightGaussian.weight)
+Weights.set_weight_func(WeightLinear.weight)
 
 start: float = time.time()
 
 for j, i in enumerate(x_axis):
 
-    WeightGaussian.set_deviation(120)
-    kmax = 20
+    # WeightGaussian.set_deviation(120)
+    WeightLinear.set_maximum_distance(200)
+    kmax = 5
     for k in range(kmax):
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=.2, random_state=randint(0, 1000)
         )
 
         model: KNeighborsRegressor = KNeighborsRegressor(
-            n_neighbors=100,
+            n_neighbors=50,
             weights=Weights.weights,
             n_jobs=1
         ).fit(X_train, y_train)
@@ -70,6 +71,8 @@ for j, i in enumerate(x_axis):
     score_train[j] /= kmax
     time_taken[j] /= kmax
 
+    print(f'{j+1}/{x_axis.shape[0]}')
+
 end: float = time.time()
 
 analise_auxiliar.print_time_of_each_prediction(start, end, numpy.size(x_axis), numpy.size(y))
@@ -81,5 +84,5 @@ print(f'Coeficientes: {100*cofs/cofs.sum()}')
 print(f'Time taken average: {numpy.average(time_taken)}')
 
 analise_auxiliar.plot_results(x_axis, score_test, score_train, time_taken,
-                              x_label="neighbors $k$")
+                              x_label="$\sigma$")
 
