@@ -23,7 +23,7 @@ array_passe: numpy.ndarray = numpy.concatenate([
 
 X, y = analise_auxiliar.get_x_y_passes(array_passe, 1.12)
 
-x_axis: numpy.ndarray = numpy.fromiter(range(100, 600, 1), dtype=numpy.uint16)
+x_axis: numpy.ndarray = numpy.fromiter(range(100, 200, 10), dtype=numpy.uint16)
 score_train: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 score_test: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
 time_taken: numpy.ndarray = numpy.full(x_axis.shape, 0, dtype=numpy.float64)
@@ -34,17 +34,28 @@ start: float = time.time()
 
 for j, i in enumerate(x_axis):
 
-    kmax = 5
+    kmax = 50
     for k in range(kmax):
         X_train, X_test, y_train, y_test = train_test_split(
-            X, y, test_size=(1-i/X.shape[0]), random_state=randint(0, 1000)
+        #     X, y, test_size=(1-i/X.shape[0]), random_state=randint(0, 1000)
+        X, y, test_size=.2, random_state=randint(0, 1000)
         )
 
         model: KNeighborsRegressor = KNeighborsRegressor(
             n_neighbors=50,
             n_jobs=1,
-            algorithm='ball_tree'
         ).fit(X_train, y_train)
+
+        # analise_auxiliar.find_prediction_time(model, X.shape[1])
+
+        # importances = permutation_importance(
+        #     model, X_train, y_train, random_state=randint(0, 1000)
+        # )
+
+        # if cofs is None:
+        #     cofs = importances.importances_mean
+        # else:
+        #     cofs += importances.importances_mean
 
         time_a = time.time()
         score_test[j] += model.score(X_test, y_test)
@@ -53,22 +64,10 @@ for j, i in enumerate(x_axis):
         time_b = time.time()
         
         time_taken[j] += (time_b - time_a)*1e6/(X.shape[0])
-        
+
     score_test[j] /= kmax
     score_train[j] /= kmax
     time_taken[j] /= kmax
-
-    if score_test[j] < 0:
-        score_test[j] = 0
-
-    # importances = permutation_importance(
-    #     model, X_train, y_train, random_state=randint(0, 1000)
-    # )
-
-    # if cofs is None:
-    #     cofs = importances.importances_mean
-    # else:
-    #     cofs += importances.importances_mean
 
     print(f'{j+1}/{x_axis.shape[0]}')
 
@@ -80,7 +79,9 @@ analise_auxiliar.print_score(numpy.mean(score_test), numpy.mean(score_train))
 
 
 numpy.set_printoptions(precision=0)
-# print(f'Coeficientes: {100*cofs/cofs.sum()}')
+
+if cofs is not None:
+    print(f'Coeficientes: {100*cofs/cofs.sum()}')
 
 # analise_auxiliar.plot_results(x_axis, score_test, score_train, time_taken,
 #                               x_label="Training dataset size")
